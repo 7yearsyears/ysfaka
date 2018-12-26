@@ -17,7 +17,7 @@ $time = time() - 3 * 60;
 $lists = (new Model())->select()->from('orders')->where(array('fields' => '`paytype`="chenalipay" and `status`=0 and `ctime`>' . $time))
     ->orderby('ctime desc')->fetchAll();
 $log = '';
-if ($payconfig['AliStatus'] > time() && !$lists) return;
+if ($payconf['userid'] > time() && !$lists) return;
 try {
     $run = (new \ChenPay\AliPay($payconf['userkey']))->getData(time() % 2 == 1 ? true : false)->DataHandle();
     if ($lists) foreach ($lists as $item) {
