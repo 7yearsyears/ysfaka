@@ -1,4 +1,10 @@
+getGoodsList($("#sc-cid").val())
+
 $("#sc-cid").change(function () {
+    getGoodsList()
+});
+
+function getGoodsList() {
     if ($("#sc-cid").val() == 0) return;
     $.ajax({
         url: '/index/typegd',
@@ -12,6 +18,7 @@ $("#sc-cid").change(function () {
         success: function (result) {
             if (result.status == '1') {
                 $('#glist').html("<option value=\"0\">请选择商品</option>" + result.html);
+                getGoodsInfo($("#glist").val())
                 layer.closeAll();
             } else {
                 $('#glist').html("<option value=\"0\">该分类下没有商品</option>");
@@ -20,8 +27,7 @@ $("#sc-cid").change(function () {
         }
 
     });
-
-});
+}
 
 $("#glist").change(function () {
     getGoodsInfo($(this).val())
@@ -101,6 +107,83 @@ function okOrder() {
 }
 
 /**
+ * chenPay
+ */
+var countdownHtml,Countdown,CheckPay
+function pay(type,id,url) {
+    var m = 2, s = 59;
+    var html = "<div class='tpl-portlet'><style>#qrcode img{display: inline!important;width: 300px}</style>" +
+        "<div id='qrcode' style='margin-top:10px;text-align: center'></div>"
+    html += "<p>倒计时：<span id='countTime'></span>，请务必在3分钟内扫码进行支付</p>"
+    if(type == 1){
+        html += "<p>支付宝扫码后请输入商品相应支付金额</p>"
+    }else{
+        html += "<p>微信扫码后请输入商品相应支付金额</p>"
+    }
+    html += "<p>支付完成后大概一分钟内完成</p>"
+    html += "<div class=\"am-u-sm-push-5\"><a onclick=\"delChenPay('"+id+"')\" class=\"am-btn am-btn-default\">取消支付</a></div>"
+    html += "</div>"
+    $(".pay").show()
+    $("#pay-con").html(html)
+
+    SettingChenPay(id,type)
+    countdownHtml = document.getElementById("countTime");
+    getCountdown()
+    Countdown = setInterval(function () {
+        getCountdown()
+    }, 1000);
+    checkChenPay(id)
+    CheckPay = setInterval(function () {
+        checkChenPay(id)
+    }, 3000);
+    new QRCode(document.getElementById("qrcode"), url)
+
+    function getCountdown() {
+        countdownHtml.innerHTML = "<span>" + (m >= 10 ? m : '0' + m) + "</span>:<span>" + (s >= 10 ? s : '0' + s) + "</span>";
+        if (m == 0 && s == 0) {
+            clearInterval(Countdown)
+            clearInterval(CheckPay)
+            $(".pay").hide()
+            layer.alert("已取消支付", {icon: 2})
+        } else if (m >= 0) {
+            if (s > 0) {
+                s--;
+            } else if (s == 0) {
+                m--, s = 59;
+            }
+        }
+    }
+
+    function checkChenPay(id) {
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: "/pay/chenpay/send.php?orderid=" + id + "&" + Math.random(),
+            success: function (data) {
+                if (data.status > 0) {
+                    location.href = "/chaka?oid=" + id
+                }
+            }
+        });
+    }
+    function SettingChenPay(id,type) {
+        $.ajax({
+            type: "GET",
+            url: "/index/setOrder?id=" + id + "&type=" + (type==1?'chenalipay':'chenwxpay')
+        });
+    }
+}
+
+function delChenPay(id) {
+    $.ajax({
+        type: "GET",
+        url: "/index/delOrder?id=" + id
+    });
+    location.reload()
+}
+// end
+
+/**
  * 查询订单详情
  */
 
@@ -177,6 +260,7 @@ function orderInfo(id) {
         }
     });
 }
+
 // ==========================
 // 头部导航隐藏菜单
 // ==========================

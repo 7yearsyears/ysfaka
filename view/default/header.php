@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/static/default/assets/css/amazeui.min.css" />
     <link rel="stylesheet" href="/static/default/assets/css/admin.css">
     <link rel="stylesheet" href="/static/default/assets/css/app.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 </head>
 <header class="am-topbar am-topbar-inverse admin-header">

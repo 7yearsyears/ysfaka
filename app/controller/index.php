@@ -36,8 +36,8 @@ class index extends Controller
         $lists = $this->model()->select()->from('goods')->where(array('fields' => 'cid=? and is_ste = 1', 'values' => array($data['cid'])))->orderby('ord desc')->fetchAll();
         $html = "";
         if ($lists) {
-            foreach ($lists as $v) {
-                $html .= "<option value=" . $v['id'] . ">" . $v['gname'] . "</option>";
+            foreach ($lists as $key=>$v) {
+                $html .= "<option value=" . $v['id'] . " ".($key==0?'selected':'').">" . $v['gname'] . "</option>";
             }
             echo json_encode(array('status' => 1, 'html' => $html));
             exit;
@@ -99,6 +99,33 @@ class index extends Controller
     }
 
     /**
+     * 删除订单
+     */
+    public function delOrder()
+    {
+        $get = $this->getReqdata($_GET);
+        if($get['id'] ==""){
+            resMsg(0,null,'');
+        }
+
+        $this->model()->select()->from('orders')->where(array('fields' => '`status`=0 and `orderid`="'.$get['id'].'"'))->delete();
+    }
+
+    /**
+     * 删除订单
+     */
+    public function setOrder()
+    {
+        $get = $this->getReqdata($_GET);
+        if($get['id'] ==""||$get['type'] ==""){
+            resMsg(0,null,'');
+        }
+
+        $this->model()->select()->from('orders')->updateSet([
+            'paytype' => $get['type']
+        ])->where(array('fields' => '`status`=0 and `orderid`="'.$get['id'].'"'))->update();
+    }
+    /**
      * 提交订单
      */
     public function postOrder()
@@ -111,6 +138,16 @@ class index extends Controller
         $goods = $this->model()->select()->from('goods')->where(array('fields' => 'id=?', 'values' => array($post['gid'])))->fetchRow();
         if(!$goods || $goods['is_ste'] == 0) resMsg(0,null,'商品不存在或已下架');
         if($goods['kuc'] < $post['number'])resMsg(0,null,'库存不足');
+
+
+        $payset = $this->model()->select()->from('acp')->where(array('fields' => ' is_ste > 0', 'values' => array()))->fetchAll();
+
+        if($payset[0]['code']=='chenalipay'||$payset[0]['code']=='chenwxpay'){
+            $time = time() - 3 * 60;
+            $order = $this->model()->select()->from('orders')->where(array('fields' => '`paytype`="'.$payset[0]['code'].'" and `status`=0 and `ctime`>'.$time))
+                ->fetchRow();
+            if($order)resMsg(0,null,'正在排队，请稍后');
+        }
         /**
          * 自动发卡
          */
@@ -149,8 +186,6 @@ class index extends Controller
         /**
          * 支付方式选择
          */
-        $payset = $this->model()->select()->from('acp')->where(array('fields' => ' is_ste > 0', 'values' => array()))->fetchAll();
-
         if($payset){
             foreach ($payset as $v){
                 switch ($v['code']){
@@ -164,8 +199,19 @@ class index extends Controller
                         $html.= "<a  href=\"/pay/index?id=".$orderid."&type=zfbqr&paycode=".$v['code']."\" class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">支付宝</a>";
                         $html.= "<a  href=\"/pay/index?id=".$orderid."&type=wxqr&paycode=".$v['code']."\" class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">微信</a>";
                         break;
+                    case 'chenalipay':
+                        $html .= "<a  href=\"javascript:pay(1,'{$orderid}','{$v['email']}');\" class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">支付宝</a>";
+                        break;
+                    case 'chenwxpay':
+                        $html .= "<a  href=\"javascript:pay(2,'{$orderid}','{$v['email']}');\" style='margin-left: 5px' class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">微信</a>";
+                        break;
+                    case 'chenwxpay':
+                        $html .= "<a  href=\"javascript:pay(2,'{$orderid}','{$v['email']}');\" style='margin-left: 5px' class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">微信</a>";
+                        break;
                 }
+
             }
+            $html .= "<a  href=\"javascript:delChenPay('{$orderid}');\" style='margin-left: 5px' class=\"am-btn am-btn-default am-round\">取消</a>";
         }
         $html.= "</div>         
             </div>";

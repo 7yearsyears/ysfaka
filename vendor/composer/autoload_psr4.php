@@ -17,4 +17,5 @@ return array(
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Endroid\\QrCode\\' => array($vendorDir . '/endroid/qr-code/src'),
     'Dj\\' => array($vendorDir . '/aileshe/upload/src/Upload'),
+    'ChenPay\\' => array($vendorDir . '/chen-see/chen-pay/src/ChenPay'),
 );

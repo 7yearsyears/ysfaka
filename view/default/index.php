@@ -72,7 +72,7 @@
                                                 <?php if($class):?>
                                                     <?php foreach($class as $key=>
                                                                   $val):?>
-                                                        <option value="<?php echo $val['id']?>">
+                                                        <option value="<?php echo $val['id']?>" <?php echo $key==0?'selected':''?>>
                                                             <?php echo $val['title']?>
                                                         </option>
                                                     <?php endforeach;?>
@@ -133,6 +133,28 @@
                 </div>
             </div>
 
+            <div class="am-u-md-6 am-u-sm-12 row-mb pay" style="display: none;position: fixed;top: 10%;width: 75%;left: 12.5%;z-index: 10000;">
+                    <div class="tpl-portlet" style="box-shadow: 0px 1px 20px -8px #000;">
+                    <div class="tpl-portlet-title">
+                        <div class="tpl-caption font-green ">
+                            <i class="am-icon-shopping-bag"></i>
+                            <span>扫码支付</span>
+                        </div>
+                        <div class="actions">
+
+                        </div>
+                    </div>
+                    <div class="tpl-scrollable">
+                        <div class="am-g tpl-amazeui-form">
+
+                            <div class="am-u-sm-12 " id="pay-con">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="am-u-md-6 am-u-sm-12 row-mb">
                 <div class="tpl-portlet">
@@ -157,7 +179,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="row">
                 <div class="am-u-md-6 am-u-sm-12 row-mb">

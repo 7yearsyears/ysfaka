@@ -1,10 +1,10 @@
 <?php
     return [
-    'server'=>'127.0.0.1',
+    'server'=>'localhost',
     'port'=>'3306',
     'user'=>'root',
-    'pass'=>'root',
-    'name'=>'ysfk',
+    'pass'=>'qwqw2007',
+    'name'=>'yunsfaka',
     'prefix'=>'ys_',
     'driver'=>'pdo',
     'debug'=>true,

@@ -60,13 +60,13 @@ class PayBase extends Controller
                 //拼接sql
                 $sql = "UPDATE ".$config::db()['prefix']."kami SET `is_ste` = 1 WHERE `id` IN (".trim($ids,',').")";
                 $res = $this->model()->query($sql);
-                //减去库存
-                $goods = $this->model()->select()->from('goods')->where(array('fields' => 'id=?', 'values' => array($order['gid'])))->fetchRow();
-                $gdata['kuc'] = ($goods['kuc'] - $order['onum']);
-                $this->model()->from('goods')->updateSet($gdata)->where(array('fields' => 'id = ?', 'values' => array($goods['id'])))->update();
 
             }
         }
+        //减去库存
+        $goods = $this->model()->select()->from('goods')->where(array('fields' => 'id=?', 'values' => array($order['gid'])))->fetchRow();
+        $gdata['kuc'] = ($goods['kuc'] - $order['onum']);
+        $this->model()->from('goods')->updateSet($gdata)->where(array('fields' => 'id = ?', 'values' => array($goods['id'])))->update();
         $status = $this->model()->from('orders')->updateSet($data)->where(array('fields' => 'orderid = ?', 'values' => array($orderid)))->update();
         if($status)
         {

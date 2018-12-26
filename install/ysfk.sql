@@ -38,6 +38,8 @@ CREATE TABLE `ys_acp`  (
 -- ----------------------------
 INSERT INTO `ys_acp` VALUES (38, 'zfbf2f', '支付宝当面付', '', '', '', 0);
 INSERT INTO `ys_acp` VALUES (40, 'alipay', '支付宝即时到账', '', '', '', 0);
+INSERT INTO `ys_acp` VALUES (41, 'chenalipay', 'CHENPAY支付宝免签', '', '', '', 0);
+INSERT INTO `ys_acp` VALUES (42, 'chenwxpay', 'CHENPAY微信免签', '', '', '', 0);
 -- ----------------------------
 -- Table structure for ys_admin
 -- ----------------------------
