@@ -205,9 +205,6 @@ class index extends Controller
                     case 'chenwxpay':
                         $html .= "<a  href=\"javascript:pay(2,'{$orderid}','{$v['email']}');\" style='margin-left: 5px' class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">微信</a>";
                         break;
-                    case 'chenwxpay':
-                        $html .= "<a  href=\"javascript:pay(2,'{$orderid}','{$v['email']}');\" style='margin-left: 5px' class=\"am-btn am-btn-warning am-round am-icon-credit-card-alt\">微信</a>";
-                        break;
                 }
 
             }
